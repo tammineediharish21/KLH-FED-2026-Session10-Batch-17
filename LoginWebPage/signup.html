@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign Up</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Create account</h1>
+    <p class="subtitle">Sign up to get started</p>
+
+    <div class="banner" id="banner"></div>
+
+    <form id="signupForm" novalidate>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" />
+        <div class="error-text" id="usernameError"></div>
+      </div>
+
+      <div class="field password-row">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="new-password" />
+        <span class="toggle-pw" id="togglePw">Show</span>
+        <div class="error-text" id="passwordError"></div>
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" autocomplete="new-password" />
+        <div class="error-text" id="confirmError"></div>
+      </div>
+
+      <button type="submit" class="btn">Sign Up</button>
+    </form>
+
+    <p class="switch-link">Already have an account? <a href="index.html">Log in</a></p>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    const form = document.getElementById("signupForm");
+    const banner = document.getElementById("banner");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirmPassword");
+    const usernameError = document.getElementById("usernameError");
+    const passwordError = document.getElementById("passwordError");
+    const confirmError = document.getElementById("confirmError");
+    const togglePw = document.getElementById("togglePw");
+
+    togglePw.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePw.textContent = isPassword ? "Hide" : "Show";
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      usernameError.textContent = "";
+      passwordError.textContent = "";
+      confirmError.textContent = "";
+      banner.className = "banner";
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmInput.value;
+
+      let hasError = false;
+      if (username.length < 3) {
+        usernameError.textContent = "Username must be at least 3 characters.";
+        hasError = true;
+      }
+      if (password.length < 6) {
+        passwordError.textContent = "Password must be at least 6 characters.";
+        hasError = true;
+      }
+      if (confirmPassword !== password) {
+        confirmError.textContent = "Passwords do not match.";
+        hasError = true;
+      }
+      if (hasError) return;
+
+      const result = registerUser(username, password);
+      if (!result.ok) {
+        showBanner(banner, result.message, "error");
+        return;
+      }
+
+      window.location.href = "index.html?registered=1";
+    });
+  </script>
+</body>
+</html>

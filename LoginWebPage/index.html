@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Welcome back</h1>
+    <p class="subtitle">Log in to your account</p>
+
+    <div class="banner" id="banner"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" />
+        <div class="error-text" id="usernameError"></div>
+      </div>
+
+      <div class="field password-row">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" />
+        <span class="toggle-pw" id="togglePw">Show</span>
+        <div class="error-text" id="passwordError"></div>
+      </div>
+
+      <button type="submit" class="btn">Log In</button>
+    </form>
+
+    <p class="switch-link">Don't have an account? <a href="signup.html">Sign up</a></p>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    const form = document.getElementById("loginForm");
+    const banner = document.getElementById("banner");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const usernameError = document.getElementById("usernameError");
+    const passwordError = document.getElementById("passwordError");
+    const togglePw = document.getElementById("togglePw");
+
+    togglePw.addEventListener("click", () => {
+      const isPassword = passwordInput.type === "password";
+      passwordInput.type = isPassword ? "text" : "password";
+      togglePw.textContent = isPassword ? "Hide" : "Show";
+    });
+
+    // Redirect to signup if there are no accounts yet, otherwise nothing to log in with.
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("registered") === "1") {
+        showBanner(banner, "Account created. You can log in now.", "success");
+      }
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      usernameError.textContent = "";
+      passwordError.textContent = "";
+      banner.className = "banner";
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      let hasError = false;
+      if (!username) {
+        usernameError.textContent = "Username is required.";
+        hasError = true;
+      }
+      if (!password) {
+        passwordError.textContent = "Password is required.";
+        hasError = true;
+      }
+      if (hasError) return;
+
+      const result = verifyUser(username, password);
+      if (!result.ok) {
+        showBanner(banner, result.message, "error");
+        return;
+      }
+
+      startSession(username);
+      window.location.href = "dashboard.html";
+    });
+  </script>
+</body>
+</html>

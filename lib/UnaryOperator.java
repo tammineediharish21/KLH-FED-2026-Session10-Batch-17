@@ -1,0 +1,9 @@
+public class UnaryOperator {
+    public static void main(String[] args) {
+
+        int a = 10;
+        int b = 10;
+        System.out.println("Postincrement ; " + (a++));
+        System.out.println("Preincrement : " +   ( ++a));
+    }
+}
